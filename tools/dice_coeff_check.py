@@ -1,10 +1,9 @@
 import pandas as pd
 import numpy as np
-
 import cv2
 from tqdm import tqdm
 
-from u_net import get_unet_640_960_11, get_unet_640_960_8
+from u_net import get_unet1_1024x1024
 
 
 def dice_coeff(y_true, y_pred):
@@ -23,15 +22,10 @@ input_h = 640 #640 #1280  #640
 input_w = 960 #960 #1920  #960
 
 batch_size = 1
-
-
 threshold = 0.5
 
-#model1 = get_unet_640_960_11()
-#model1.load_weights(filepath='weights/unet_11_960_31gc_AugScale_noDrop_testSplit20.12-0.99609-0.99612.hdf5')
-
-model = get_unet_640_960_8()
-model.load_weights(filepath='weights/unet-960_8_noblur_NoequalizeHist.16-0.99611.hdf5')
+model = get_unet1_1024x1024()
+model.load_weights(filepath='weights/unet-1024_noblur_NoequalizeHist.16-0.99611.hdf5')
 
 names = []
 for id in ids_train:
