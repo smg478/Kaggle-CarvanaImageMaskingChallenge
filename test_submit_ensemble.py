@@ -47,15 +47,15 @@ for id in ids_test:
 
 
 print("Start loading candidate submissions:")
-cand1 = pd.read_csv('submit/best_submit/unet_8_1024csv.gz', compression='gzip')
+cand1 = pd.read_csv('submit/best_submit/unet1_1024x1024.csv.gz', compression='gzip')
 cand1 = cand1.sort_values('img', ascending=True)
 cand1 =cand1["rle_mask"]
 
-cand2 = pd.read_csv('submit/best_submit/unet_8_1024x1536.csv.gz', compression='gzip')
+cand2 = pd.read_csv('submit/best_submit/unet1_1024x1536.csv.gz', compression='gzip')
 cand2 = cand2.sort_values('img', ascending=True)
 cand2 =cand2["rle_mask"]
 
-cand3 = pd.read_csv('submit/best_submit/unet_8_832x1216.csv.gz', compression='gzip')
+cand3 = pd.read_csv('submit/best_submit/unet1_832x1216.csv.gz', compression='gzip')
 cand3 = cand3.sort_values('img', ascending=True)
 cand3 =cand3["rle_mask"]
 
