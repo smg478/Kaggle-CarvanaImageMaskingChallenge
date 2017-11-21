@@ -13,7 +13,6 @@ from u_net import get_unet1_1024x1024
 df_train = pd.read_csv('input/train_masks_weighted.csv')
 ids_train = df_train['img'].map(lambda s: s.split('.')[0])
 
-
 input_h = 1024 #640 #1280  #640 832x1248
 input_w = 1024 #960 #1920  #960
 
