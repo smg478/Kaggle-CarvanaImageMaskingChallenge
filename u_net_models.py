@@ -276,8 +276,6 @@ def get_unet1_1024x1024(input_shape=(1024, 1024, 3),
     res1 = UpSampling2D((4,4))(down1) #640
     res_stream = Add()([res1, res_stream])
 
-
-
     # 80x120
     res_stream_pool =  MaxPooling2D((8, 8), strides=(8, 8))(res_stream)
 
