@@ -1,3 +1,5 @@
+# Thanks to Peter Giannakopoulos https://www.kaggle.com/c/carvana-image-masking-challenge/discussion/37523
+
 import cv2
 import numpy as np
 import pandas as pd
@@ -5,11 +7,11 @@ import threading
 import queue
 import tensorflow as tf
 from tqdm import tqdm
-from u_net import get_unet_1280x1280_8
+from u_net import get_unet1_1024x1024
 
 
-input_h = 1280 #1280  #640
-input_w = 1280 #1920  #960
+input_h = 1024 #1280  #640
+input_w = 1024 #1920  #960
 batch_size = 4
 
 orig_width = 1918
@@ -17,8 +19,8 @@ orig_height = 1280
 
 threshold = 0.5
 
-model = get_unet_1280x1280_8()
-model.load_weights(filepath='weights/unet_8_1280x1280_rand2017_shiftFlipHue_hardExmpl_testSplit20.05-0.99647-0.99634.hdf5')
+model = get_unet1_1024x1024()
+model.load_weights(filepath='weights/unet1_05-0.99647-0.99634.hdf5')
 
 df_test = pd.read_csv('input/sample_submission.csv')
 ids_test = df_test['img'].map(lambda s: s.split('.')[0])
@@ -88,4 +90,4 @@ t2.join()
 
 print("Generating submission file...")
 df = pd.DataFrame({'img': names, 'rle_mask': rles})
-df.to_csv('submit/unet_8_1280x1280_rand2017_shiftFlipHue_hardExmpl_testSplit20.05-0.99647-0.99634.csv.gz', index=False, compression='gzip')
+df.to_csv('submit/unet1_05-0.99647-0.99634.csv.gz', index=False, compression='gzip')
