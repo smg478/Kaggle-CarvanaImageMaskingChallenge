@@ -1,33 +1,31 @@
+# Thanks to Peter Giannakopoulos https://www.kaggle.com/c/carvana-image-masking-challenge/discussion/37523
+
 import pandas as pd
 import numpy as np
-
 import cv2
 from time import time
-
 from sklearn.model_selection import train_test_split
-
 from keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint, TensorBoard
 from keras import optimizers
-
-from u_net import get_unet_1280x960_8
+from u_net import get_unet1_1024x1024
 
 
 df_train = pd.read_csv('input/train_masks_weighted.csv')
 ids_train = df_train['img'].map(lambda s: s.split('.')[0])
 
 
-input_h = 1280 #640 #1280  #640 832x1248
-input_w = 1920 #960 #1920  #960
+input_h = 1024 #640 #1280  #640 832x1248
+input_w = 1024 #960 #1920  #960
 
 epochs = 50
-batch_size = 1
+batch_size = 4
 
-ids_train_split, ids_valid_split = train_test_split(ids_train, test_size=0.2, random_state=2017)  #(u8: 42/960, 542/960, 1042/1024, 742/1216, 1536/1536, 1280/2017, u11: 42/960, 742/1024, )
+ids_train_split, ids_valid_split = train_test_split(ids_train, test_size=0.2, random_state=2017) 
 
 print('Training on {} samples'.format(len(ids_train_split)))
 print('Validating on {} samples'.format(len(ids_valid_split)))
 
-
+####################################################################################################
 # Augmentation methods
 
 def randomShiftScaleRotate(image, mask,
@@ -152,7 +150,9 @@ def random_gray(img, u=0.5):
         gray = np.sum(img * coef, axis=2)
         img = np.dstack((gray, gray, gray))
     return np.uint8(img*255)
-
+  
+#####################################################################################################
+# data preparation
 
 def train_generator():
     while True:
@@ -164,7 +164,6 @@ def train_generator():
             for id in ids_train_batch.values:
                 img = cv2.imread('input/train_hq/{}.jpg'.format(id))
                 img = cv2.resize(img, (input_w, input_h))
-                img = img[:, :960]
 
                 # Augmentation Testing ==================================================
                 #img = gamma_correction(img, u=0.5)
@@ -174,13 +173,13 @@ def train_generator():
                 #img = img[160:1120, 0:960]  # NOTE: its img[y: y + h, x: x + w]
                 #img = random_saturation(img, u=0.25)
                 #img = random_brightness(img, u=0.25)
-                # img = random_contrast(img, u=0.25)
+                #img = random_contrast(img, u=0.25)
                 #img = random_gray(img, u=0.25)
                 #===============================================================
 
                 mask = cv2.imread('input/train_masks/{}_mask.png'.format(id), cv2.IMREAD_GRAYSCALE)
                 mask = cv2.resize(mask, (input_w, input_h))
-                mask = mask[:, :960]
+                
                 img, mask = randomShiftScaleRotate(img, mask,
                                                    shift_limit=(-0.0625, 0.0625),
                                                    scale_limit=(-0.0, 0.0),
@@ -209,10 +208,8 @@ def valid_generator():
             for id in ids_valid_batch.values:
                 img = cv2.imread('input/train_hq/{}.jpg'.format(id))
                 img = cv2.resize(img, (input_w, input_h))
-                img = img[:, :960]
                 mask = cv2.imread('input/train_masks/{}_mask.png'.format(id), cv2.IMREAD_GRAYSCALE)
                 mask = cv2.resize(mask, (input_w, input_h))
-                mask = mask[:, :960]
                 mask = np.expand_dims(mask, axis=2)
                 x_batch.append(img)
                 y_batch.append(mask)
@@ -231,24 +228,23 @@ callbacks = [EarlyStopping(monitor='val_loss',
                                verbose=1,
                                epsilon=1e-4),
              ModelCheckpoint(monitor='val_loss',
-                             filepath='weights/unet_8_1280x1920_left_rand2017_shiftFlipHue_hardExmpl_testSplit20.{epoch:02d}-{dice_coeff:.5f}-{val_dice_coeff:.5f}.hdf5',
+                             filepath='weights/unet1_{epoch:02d}-{dice_coeff:.5f}-{val_dice_coeff:.5f}.hdf5',
                              save_best_only=False,
                              save_weights_only=True,
                              period = 1),
-             TensorBoard(log_dir="logs/",  histogram_freq=0,  write_graph=True, write_images=True)]
+             TensorBoard(log_dir="logs/")]
 
 
-model = get_unet_1280x960_8()
+model = get_unet1_1024x1024()
 
 
 print('model created.')
-model.load_weights(filepath='weights/best_weights/unet_8_1024x1536_rand1536_FlipHue_hardExmpl_testSplit20.05-0.99657-0.99641.hdf5', by_name=True)
+model.load_weights(filepath='weights/best_weights/unet1_05-0.99657-0.99641.hdf5', by_name=True)
 print('Weights loaded.')
 
 
 model.fit_generator(generator=train_generator(),
                     steps_per_epoch=np.ceil(float(len(ids_train_split)) / float(batch_size)),
-                    #steps_per_epoch=3000,
                     epochs=epochs,
                     verbose=1,
                     callbacks=callbacks,
