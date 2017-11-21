@@ -3,5 +3,5 @@ Solution
 
 This repository contains the keras solution files of the challange. 
 
-# Disclaimer
+## Disclaimer
 Thanks to Peter for his code   
