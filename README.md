@@ -52,7 +52,7 @@ Run python test_submit_multithreaded.py to make predictions on test data and gen
 
 Run python test_submit_ensemble.py to make weighted average ensemble from submission files.
 
-### tools
+### Tools
 
 'tools' folder contains some useful codes for fast experiment and result analysis.
 
