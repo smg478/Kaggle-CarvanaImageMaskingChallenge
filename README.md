@@ -1,9 +1,9 @@
 ## Kaggle Carvana Image Masking Challange 2017 solution on keras
 
 This repository contains the keras solution files of the challange. 
-Results produced from this solution ranks below 50 in the private leaderboard of the competition.
+Results produced from this architecture scored 0.9967 in the private leaderboard of the competition. 
 
-The solution is based on [Peter's](https://github.com/petrosgk/Kaggle-Carvana-Image-Masking-Challenge) starter code for keras. Usage of the code is mostly similar to his one. However, the main contribution of this work is a modified version of the u-net.
+The solution is based on [Peter's](https://github.com/petrosgk/Kaggle-Carvana-Image-Masking-Challenge) starter code with keras. I thank him for his clean work! Usage of the code is mostly similar to his one. However, the main contribution of this work is a modified version of the u-net.
 
 The file 'u_net_models.py' contains definitions of one basic and two modified u-nets. 
 
