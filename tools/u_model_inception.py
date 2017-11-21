@@ -30,7 +30,8 @@ def bce_dice_loss(y_true, y_pred):
     loss = binary_crossentropy(y_true, y_pred) + dice_loss(y_true, y_pred)
     return loss
 
-
+#################################################################################################
+#https://github.com/EdwardTyantov/ultrasound-nerve-segmentation/blob/master/u_model.py
 # inception blocks
 
 def _shortcut(_input, residual):
@@ -297,6 +298,7 @@ def get_unet_inception():
 
     return model
 
+###################################################################################################
 
 def global_conv_block(inputs, k=31, channel=16):
     feature_1 = Conv2D(channel, (k, 1), activation='relu', padding='same', dilation_rate=(1, 1))(inputs)
@@ -319,6 +321,9 @@ def boundary_refine(inputs, channel=16):
     br = Activation('relu')(br)
     br = Conv2D(channel, (3, 3), padding='same', use_bias=True)(br)
     return br
+
+#########################################################################################################
+
 def get_unet_640_960_12(input_shape=(640, 960, 3),
                        num_classes=1):
     inputs = Input(shape=input_shape)
@@ -371,8 +376,6 @@ def get_unet_640_960_12(input_shape=(640, 960, 3),
 
     res2 = UpSampling2D((8,8))(down2)
     res_stream = Add()([res2, res_stream])  #640
-
-
 
     # 40x60
     res_stream_pool = MaxPooling2D((16, 16), strides=(16, 16))(res_stream)
@@ -450,7 +453,6 @@ def get_unet_640_960_12(input_shape=(640, 960, 3),
 
 
     # 40x60
-
     res_stream_pool = MaxPooling2D((16, 16), strides=(16, 16))(res_stream)
 
     up3 = UpSampling2D((2, 2))(up4)
@@ -515,7 +517,6 @@ def get_unet_640_960_12(input_shape=(640, 960, 3),
     res_stream = Add()([res_up0, res_stream])  # 640
 
     # 640x960
-
     up0a = UpSampling2D((2, 2))(up0)
     up0a = concatenate([res_stream, down0a, up0a], axis=3)
     up0a = global_conv_block(up0a, k=31, channel=16)
