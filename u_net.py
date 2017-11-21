@@ -1,3 +1,4 @@
+# Thanks to Peter Giannakopoulos https://www.kaggle.com/c/carvana-image-masking-challenge/discussion/37523
 
 from keras.models import Model
 from keras.layers import Input, concatenate, Conv2D, MaxPooling2D, BatchNormalization, Activation, UpSampling2D, Average, Add, SeparableConv2D, Conv2DTranspose
@@ -5,15 +6,11 @@ from keras.optimizers import SGD, Adam
 from keras.losses import binary_crossentropy
 import keras.backend as K
 from keras import regularizers
-#from keras.layers import BatchNormalization, Convolution2D, Input, merge
 from keras.layers.core import Activation, Layer, SpatialDropout2D
 from keras.utils.vis_utils import plot_model
 from keras.layers.advanced_activations import PReLU, ELU
-#from keras_contrib.layers import CRF
-#from keras.preprocessing.sequence import pad_sequences
 
-#from crfrnn_layer import CrfRnnLayer
-
+#########################################################################################################
 def dice_coeff(y_true, y_pred):
     smooth = 1.
     y_true_f = K.flatten(y_true)
@@ -104,6 +101,8 @@ def weighted_bce_dice_loss(y_true, y_pred):
     loss = weighted_bce_loss(y_true, y_pred, weight) + (1 - weighted_dice_coeff(y_true, y_pred, weight))
     return loss
 
+##################################################################################################################
+# https://github.com/EdwardTyantov/ultrasound-nerve-segmentation/blob/master/u_model.py
 
 def inception_block(inputs, depth, splitted=False, activation='relu'):
     assert depth % 16 == 0
@@ -164,7 +163,7 @@ def boundary_refine(inputs, channel=16):
     br = Conv2D(channel, (3, 3), padding='same', use_bias=True)(br)
     return br
 
-########################################################################################
+#############################################################################################################
 
 def get_unet_128(input_shape=(128, 128, 3),
                  num_classes=1):
@@ -271,7 +270,6 @@ def get_unet_128(input_shape=(128, 128, 3),
 
     model = Model(inputs=inputs, outputs=classify)
     model.compile(optimizer=Adam(lr=0.01), loss='binary_crossentropy', metrics=[dice_loss])
-    #model.compile(optimizer=SGD(lr=0.01, momentum=0.9), loss='binary_crossentropy', metrics=[dice_loss])
 
     return model
 
