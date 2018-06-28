@@ -10,8 +10,8 @@ from tqdm import tqdm
 from u_net import get_unet1_1024x1024
 
 
-input_h = 1024 #1280  #640
-input_w = 1024 #1920  #960
+input_h = 1024
+input_w = 1024
 batch_size = 4
 
 orig_width = 1918

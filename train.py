@@ -13,8 +13,8 @@ from u_net import get_unet1_1024x1024
 df_train = pd.read_csv('input/train_masks_weighted.csv')
 ids_train = df_train['img'].map(lambda s: s.split('.')[0])
 
-input_h = 1024 #640 #1280  #640 832x1248
-input_w = 1024 #960 #1920  #960
+input_h = 1024
+input_w = 1024
 
 epochs = 50
 batch_size = 4
@@ -24,9 +24,7 @@ ids_train_split, ids_valid_split = train_test_split(ids_train, test_size=0.2, ra
 print('Training on {} samples'.format(len(ids_train_split)))
 print('Validating on {} samples'.format(len(ids_valid_split)))
 
-####################################################################################################
 # Augmentation methods
-
 def randomShiftScaleRotate(image, mask,
                            shift_limit=(-0.0625, 0.0625),
                            scale_limit=(-0.1, 0.1),
@@ -150,9 +148,8 @@ def random_gray(img, u=0.5):
         img = np.dstack((gray, gray, gray))
     return np.uint8(img*255)
   
-#####################################################################################################
-# data preparation
 
+# data preparation
 def train_generator():
     while True:
         for start in range(0, len(ids_train_split), batch_size):
